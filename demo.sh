@@ -1,19 +1,32 @@
 #!/bin/sh
 baseUrl=http://localhost:3000
 RANDOM=$$
-declare -a canistersIdsArray #TODO use data from list endpoint, not memory variable
+declare -a canistersIdsArray
 
 echo "Start deploy canisters"
 
 for i in {0..4} ; do
   deployedId=$(curl --request POST -sL --url ${baseUrl}'/deploy')
-  canistersIdsArray[i]="$deployedId"
-  echo "Deployed canister with ID $deployedId, ${i+1} from 5"
+  echo "Deployed canister with ID $deployedId, ${i} from 5"
 done
 
 echo "Canisters deploy finished"
 
 listRes=$(curl --request GET -sL --url ${baseUrl}'/canisters')
+echo "Current deployed canisters from api:"
+echo "${listRes}"
+
+# strip white space
+listRes=${listRes// /}
+# substitute , with space
+listRes=${listRes//,/ }
+# remove "
+listRes=${listRes//\"/}
+# remove [ and ]
+listRes=${listRes##[}
+listRes=${listRes%]}
+# set canisters ids array to variable
+canistersIdsArray=(${listRes})
 
 echo "Start set random count for deployed canisters"
 

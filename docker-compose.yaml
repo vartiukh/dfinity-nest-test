@@ -1,0 +1,43 @@
+version: '3.1'
+
+networks:
+  dfinity_nest_test:
+
+services:
+  dfinity:
+    image: dfinity_test
+    entrypoint: /bin/bash
+    command: -c "dfx start --host 0.0.0.0:8000 --clean"
+    build:
+      context: ./dfinity
+      dockerfile: ./ubuntu.Dockerfile
+    container_name: dfinity_test
+    volumes:
+      - /app/node_modules
+      - ./local_data/dfinity_cache:/home/gitpod/.cache
+    networks:
+      - dfinity_nest_test
+    ports:
+      - 8000:8000
+  nest:
+    image: nest_test
+    build:
+      context: ./nest
+      dockerfile: ./Dockerfile
+    container_name: nest_test
+    command: yarn run start:dev
+    tty: true
+    restart: "always"
+    volumes:
+      - ./nest/:/app
+      - /app/node_modules
+    depends_on:
+      - dfinity
+    links:
+      - dfinity
+    networks:
+      - dfinity_nest_test
+    ports:
+      - 3000:3000
+    environment:
+      - DFINITY_HOST=http://dfinity:8000

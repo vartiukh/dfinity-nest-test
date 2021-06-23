@@ -18,9 +18,10 @@ const DfinityRegistryDid = ({ IDL }: { IDL: any }) => {
 export class AppService {
   readonly httpAgent: HttpAgent;
   private canisters: Record<string, ActorSubclass> = {};
+  private DFINITY_HOST = process.env.DFINITY_HOST || 'http://localhost:8000'
 
   constructor() {
-    this.httpAgent = new HttpAgent({ fetch: fetch, host: 'http://localhost:8000', identity: new AnonymousIdentity() })
+    this.httpAgent = new HttpAgent({ fetch: fetch, host: this.DFINITY_HOST, identity: new AnonymousIdentity() })
   }
   getHello(): string {
     return 'Hello World!';
@@ -36,7 +37,7 @@ export class AppService {
           fs.readFileSync(
             path.resolve(
               __dirname,
-              '../../dfinity/.dfx/local/canisters/dfinity/dfinity.wasm'
+              '../dfinity/dfinity.wasm'
             )
           ) as any
         ),
