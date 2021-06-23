@@ -1,7 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 baseUrl=http://localhost:3000
 RANDOM=$$
 declare -a canistersIdsArray
+
+sleep 1m # Wait until server start
 
 echo "Start deploy canisters"
 
